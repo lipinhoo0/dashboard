@@ -3,7 +3,7 @@
 session_start();
 
 // isset verifica se a variavel foi criada
-if (isset($_SESSION["tipo"]) && isset($_SESSION["msg"])) {
+if (isset($_SESSION["tipo"]) && isset($_SESSION["title"]) && isset($_SESSION["msg"])) {
     echo "
     <script>
     $(function() {
@@ -16,7 +16,8 @@ if (isset($_SESSION["tipo"]) && isset($_SESSION["msg"])) {
     
           Toast.fire({
             icon: '".$_SESSION["tipo"]."',
-            title: '".$_SESSION["msg"]."'
+            title: '".$_SESSION["title"]."'
+            text: '".$_SESSION["msg"]."'
           });
     });
     </script>
