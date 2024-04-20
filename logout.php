@@ -1,5 +1,6 @@
 <?php
+include ('./verificar_aut.php');
 session_start();
 session_destroy();
-header("Location: ./tela_login.php");
+header("Location:" . caminhoURL . "login.php");
 exit;

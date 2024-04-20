@@ -1,19 +1,24 @@
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav id="navBar" class="main-header navbar navbar-expand navbar-white navbar-light">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="./" class="nav-link">Home</a>
+          <a href="<?php echo caminhoURL ?>index.php  '" class="nav-link">Home</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="./contato" class="nav-link">Contact</a>
+          <a href="<?php echo caminhoURL ?>contato" class="nav-link">Contact</a>
         </li>
       </ul>
 
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link">
+            <i id="theme-mode" class="fas fa-moon"></i>
+          </a>
+        </li>
         <!-- Navbar Search -->
 
 
@@ -49,6 +54,11 @@
         <li class="nav-item">
           <a class="nav-link" data-widget="fullscreen" href="#" role="button">
             <i class="fas fa-expand-arrows-alt"></i>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo caminhoURL?>logout.php" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i>
           </a>
         </li>
       </ul>

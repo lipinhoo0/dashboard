@@ -1,5 +1,6 @@
 <?php
-include('verificar_aut.php')
+include('./verificar_aut.php');
+include('./conexao-pdo.php')
 ?>
 
 
@@ -86,7 +87,7 @@ include('verificar_aut.php')
                 <div class="icon">
                   <i class="bi bi-graph-up-arrow "></i>
                 </div>
-                <a href="./servicos" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./servicos" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -114,7 +115,7 @@ include('verificar_aut.php')
                   <p>Serviços</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-pie-graph"></i>
+                  <i class="bi bi-tools"></i>
                 </div>
                 <a href="#" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
               </div>
@@ -185,6 +186,25 @@ include('verificar_aut.php')
 
   <script>
     $(function() {
+
+      $("#theme-mode").click(function() {
+        //pegar atributo class do objeto
+        var classMode = $("#theme-mode").attr("class");
+        if (classMode == "fas fa-sun") {
+          $("body").removeClass("dark-mode");
+          $("#theme-mode").attr("class", "fas fa-moon");
+          $("#navBar").removeClass("navbar-dark navbar-black")
+          $("#navBar").addClass("navbar-light navbar-white")
+          $("#asideMenu").attr("class","main-sidebar sidebar-light-primary elevation-4")
+
+        } else {
+          $("body").addClass("dark-mode");
+          $("#theme-mode").attr("class", "fas fa-sun");
+          $("#navBar").removeClass("navbar-light navbar-white")
+          $("#navBar").addClass(" navbar-dark navbar-black")
+          $("#asideMenu").attr("class", "main-sidebar sidebar-dark-primary elevation-4")
+        }
+      });
       var areaChartData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [{

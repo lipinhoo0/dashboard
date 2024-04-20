@@ -1,6 +1,10 @@
 <?php
-
+//inicia a sessão para ter acesso as variáveis globais
 session_start();
+
+//caminho do software web
+define("caminhoURL", "http://localhost/eugenio_gatinho012/dashboard/");
+
 // verifica se o usuario não está conectado
 if ($_SESSION["autenticado"] != true) {
     session_destroy();
@@ -10,7 +14,7 @@ if ($_SESSION["autenticado"] != true) {
 } else {
 
     // segundos
-    $tempo_limite = 30000;
+    $tempo_limite = 300000;
     $tempo_atual = time();
 
     // verifica tempo inativo 
