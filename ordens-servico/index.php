@@ -10,7 +10,7 @@ include('../conexao-pdo.php');
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Servac - Clientes</title>
+  <title>Servac - Ordens de Serviço</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -57,7 +57,7 @@ include('../conexao-pdo.php');
               <!-- BAR CHART -->
               <div class="mt-3 card card-primary card-outline">
                 <div class="card-header">
-                  <h3 class="card-title">Lista de Clientes</h3>
+                  <h3 class="card-title">Lista de Ordens de Serviço</h3>
                   <a href="./form.php" class="btn btn-sm btn-primary float-right">
                     <i class="bi bi-plus"></i>
                   </a>
@@ -68,18 +68,18 @@ include('../conexao-pdo.php');
                     <thead>
                       <tr>
                         <th>CÓD</th>
-                        <th>CLIENTES</th>
-                        <th>CPF</th>
-                        <th>CONTATO (tel)</th>
-                        <th>OPÇÕES</th>
+                        <th>Clientes</th>
+                        <th>Data Inicial</th>
+                        <th>Data Final</th>
+                        <th>Opções</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
                       $sql = "
-                      SELECT pk_cliente, nome, cpf, whatsapp
-                      FROM clientes
-                      ORDER BY pk_cliente
+                      SELECT pk_ordem_servico, data_inicio, data_fim, fk_cliente
+                      FROM ordens_servicos
+                      ORDER BY pk_ordem_servico
                       ";
 
                       $stmt = $conn->prepare($sql);
@@ -90,15 +90,15 @@ include('../conexao-pdo.php');
                       foreach ($dados as $row) {
                         echo '
                         <tr>
-                        <td class ="text-center">' . $row->pk_cliente . '</td>
-                        <td>' . $row->nome . '</td>
-                        <td>'.$row->cpf .'</td>
-                        <td>'.$row->whatsapp.'</td>
+                        <td class ="text-center">' . $row->pk_ordem_servico . '</td>
+                        <td>'.$row->fk_cliente .'</td>
+                        <td>' . date('d/m/Y', strtotime($row->data_inicio)) . '</td>
+                        <td>' . date('d/m/Y', strtotime($row->data_fim)) .'</td>
                         <td class= "text-center">
                             <div class=" text-center btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
                                 <div class="btn-group me-2" role="group" aria-label="First group">
-                                    <a href="form.php?ref=' . base64_encode($row->pk_cliente) . '" class="btn btn-sm btn-outline-secondary bi bi-brush "></a>
-                                    <a href="remover.php?ref=' . base64_encode($row->pk_cliente) . '" class="btn btn-sm btn-outline-secondary bi bi-trash"></a>
+                                    <a href="form.php?ref=' . base64_encode($row->pk_ordem_servico) . '" class="btn btn-sm btn-outline-secondary bi bi-brush "></a>
+                                    <a href="remover.php?ref=' . base64_encode($row->pk_ordem_servico) . '" class="btn btn-sm btn-outline-secondary bi bi-trash"></a>
                                 </div>
                             </div>
                         </td>

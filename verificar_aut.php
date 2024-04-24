@@ -14,7 +14,7 @@ if ($_SESSION["autenticado"] != true) {
 } else {
 
     // segundos
-    $tempo_limite = 300000;
+    $tempo_limite = 30000;
     $tempo_atual = time();
 
     // verifica tempo inativo 
@@ -23,7 +23,7 @@ if ($_SESSION["autenticado"] != true) {
         $_SESSION["title"] = "Ops!";
         $_SESSION["msg"] = "Tempo de sessão esgotado!";
 
-        header("Location: ./login.php");
+        header("Location:".caminhoURL."login.php");
         exit;
     }else{
         $_SESSION["tempo_login"] = time();

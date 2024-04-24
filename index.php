@@ -102,7 +102,7 @@ include('./conexao-pdo.php')
                 <div class="icon">
                   <i class="bi bi-people"></i>
                 </div>
-                <a href="./servicos" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php caminhoURL?>cliente" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -117,7 +117,7 @@ include('./conexao-pdo.php')
                 <div class="icon">
                   <i class="bi bi-tools"></i>
                 </div>
-                <a href="#" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php caminhoURL?>servicos" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->

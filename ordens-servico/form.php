@@ -2,41 +2,41 @@
 include('../verificar_aut.php');
 include('../conexao-pdo.php');
 
-//verifica se está vindo id na url
-if (empty($_GET["ref"])) {
-    $pk_cliente = "";
-    $nome = "";
-    $cpf = "";
-    $whatsapp = "";
-    $email = "";
-} else {
-    $pk_cliente = base64_decode((trim($_GET["ref"])));
-    $sql = "
-    SELECT pk_cliente, nome, cpf, whatsapp, email
-    FROM clientes
-    WHERE pk_cliente = :pk_cliente
-    ";
-    //prepara a sintaxe 
-    $stmt = $conn->prepare($sql);
-    //substitui a string :pk_servico pela variável $pk_servico
-    $stmt->bindParam(':pk_cliente', $pk_cliente);
-    //executa a sintaxe final do sql 
-    $stmt->execute();
-    // verifica se encontrou algum registro no banco de dados
-    if ($stmt->rowCount() > 0) {
+// //verifica se está vindo id na url
+// if (empty($_GET["ref"])) {
+//     $pk_cliente = "";
+//     $nome = "";
+//     $cpf = "";
+//     $whatsapp = "";
+//     $email = "";
+// } else {
+//     $pk_cliente = base64_decode((trim($_GET["ref"])));
+//     $sql = "
+//     SELECT pk_cliente, nome, cpf, whatsapp, email
+//     FROM clientes
+//     WHERE pk_cliente = :pk_cliente
+//     ";
+//     //prepara a sintaxe 
+//     $stmt = $conn->prepare($sql);
+//     //substitui a string :pk_servico pela variável $pk_servico
+//     $stmt->bindParam(':pk_cliente', $pk_cliente);
+//     //executa a sintaxe final do sql 
+//     $stmt->execute();
+//     // verifica se encontrou algum registro no banco de dados
+//     if ($stmt->rowCount() > 0) {
 
-        $dado = $stmt->fetch(PDO::FETCH_OBJ);
-        $nome = $dado->nome;
-        $cpf = $dado->cpf;
-        $whatsapp = $dado->whatsapp;
-        $email = $dado->email;
-    } else {
-        $_SESSION["tipo"] = 'error';
-        $_SESSION["title"] = 'Ops!';
-        $_SESSION["msg"] = 'Registro não encontrado.';
-        header(("Location ./"));
-    }
-}
+//         $dado = $stmt->fetch(PDO::FETCH_OBJ);
+//         $nome = $dado->nome;
+//         $cpf = $dado->cpf;
+//         $whatsapp = $dado->whatsapp;
+//         $email = $dado->email;
+//     } else {
+//         $_SESSION["tipo"] = 'error';
+//         $_SESSION["title"] = 'Ops!';
+//         $_SESSION["msg"] = 'Registro não encontrado.';
+//         header(("Location ./"));
+//     }
+// }
 ?>
 
 
@@ -46,7 +46,7 @@ if (empty($_GET["ref"])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Dashboard</title>
+    <title>Servac | Formulário</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -99,29 +99,59 @@ if (empty($_GET["ref"])) {
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-2">
                                                 <label for="pk_cliente" class="form-label">Cód</label>
-                                                <input readonly type="text" class="form-control" id="pk_cliente" name="pk_cliente" value="<?php echo $pk_cliente ?>">
+                                                <input readonly type="text" class="form-control" id="pk_cliente" name="pk_cliente" value="<?php ?>">
                                             </div>
-                                            <div class="col">
+                                            <div class="col-4">
+                                                <label for="cpf" class="form-label">Cpf</label>
+                                                <input type="text" class="form-control" id="cpf" name="cpf" value="<?php ?>" data-mask="000.000.000-00" required minlength="14">
+                                            </div>
+                                            <div class="col-6">
                                                 <label for="nome" class="form-label">Nome</label>
-                                                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $nome ?>">
+                                                <input readonly type="text" class="form-control" id="nome" name="nome" value="<?php ?>">
                                             </div>
                                         </div> <!-- /row -->
                                         <div class="row mt-3">
                                             <div class="col">
-                                                <label for="cpf" class="form-label">Cpf</label>
-                                                <input type="text" class="form-control" id="cpf" name="cpf" value="<?php echo $cpf ?>" data-mask="000.000.000-00" required minlength="14">
+                                                <label for="data_ordem_servico" class="form-label">Data O.S</label>
+                                                <input readonly type="text" class="form-control" id="data_ordem_servico" name="data_ordem_servico" value="<?php ?>">
                                             </div>
                                             <div class="col">
-                                                <label for="whatsapp" class="form-label">Whatsapp</label>
-                                                <input type="text" class="form-control" id="whatsapp" name="whatsapp" value="<?php echo $whatsapp ?>" data-mask="(00) 0 0000-0000" required minlength="16">
+                                                <label for="" class="form-label">Data Inicio</label>
+                                                <input type="date" class="form-control" id="" name="" value="<?php  ?>">
                                             </div>
                                             <div class="col">
-                                                <label for="email" class="form-label">Email</label>
-                                                <input type="email" class="form-control" id="email" name="email" value="<?php echo $email ?>" required>
-                                            </div> 
+                                                <label for="" class="form-label">Data Fim</label>
+                                                <input type="date" class="form-control" id="" name="" value="<?php  ?>">
+                                            </div>
                                         </div> <!-- /row -->
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="mt-3 card card-secondary card-outline">
+                                                    <div class="card-header">
+                                                        <h5> Lista de Serviços </h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <label for="" class="form-label">Serviço</label>
+                                                                <select class="form-select-lg" aria-label="Default select example">
+                                                                    <option selected>Selecione</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col">
+                                                                <label for="" class="form-label"> Valor </label>
+                                                                <input type="text" name="" id="" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <!-- /.card-body -->
                                     <div class="card-footer text-right">
