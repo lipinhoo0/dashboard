@@ -71,29 +71,37 @@ include('../conexao-pdo.php');
                         <th>Clientes</th>
                         <th>Data Inicial</th>
                         <th>Data Final</th>
+                        <th>R$ Total</th>
                         <th>Opções</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
                       $sql = "
-                      SELECT pk_ordem_servico, data_inicio, data_fim, fk_cliente
+                      SELECT pk_ordem_servico, data_inicio, data_fim, fk_cliente, FORMAT(valor_total,2,'de_DE') as valor_total,
+                      nome
                       FROM ordens_servicos
+                      JOIN clientes ON fk_cliente = pk_cliente
                       ORDER BY pk_ordem_servico
                       ";
 
-                      $stmt = $conn->prepare($sql);
-                      $stmt->execute();
-                      $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+                      try {
 
-                      
-                      foreach ($dados as $row) {
-                        echo '
+                        //prepara a sintaxe na conexão
+                        $stmt = $conn->prepare($sql);
+                        //executa o comando
+                        $stmt->execute();
+                        //recebe as infomações vindas do mysql
+                        $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+                        //recebe as informações para printar informações
+                        foreach ($dados as $row) {
+                          echo '
                         <tr>
                         <td class ="text-center">' . $row->pk_ordem_servico . '</td>
-                        <td>'.$row->fk_cliente .'</td>
+                        <td>' . $row->nome . '</td>
                         <td>' . date('d/m/Y', strtotime($row->data_inicio)) . '</td>
-                        <td>' . date('d/m/Y', strtotime($row->data_fim)) .'</td>
+                        <td>' . date('d/m/Y', strtotime($row->data_fim)) . '</td>
+                        <td>' . $row->valor_total . '</td>
                         <td class= "text-center">
                             <div class=" text-center btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
                                 <div class="btn-group me-2" role="group" aria-label="First group">
@@ -104,7 +112,17 @@ include('../conexao-pdo.php');
                         </td>
                         </tr>
                         ';
+                        }
+                        $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+                      } catch (Exception $ex) {
+                        $_SESSION["tipo"] = "error";
+                        $_SESSION["title"] = "Ops!";
+                        $_SESSION ["msg"] = $ex->getMessage();
                       }
+
+
+
+
                       ?>
                     </tbody>
                   </table>

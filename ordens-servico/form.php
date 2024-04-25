@@ -2,41 +2,45 @@
 include('../verificar_aut.php');
 include('../conexao-pdo.php');
 
-// //verifica se está vindo id na url
-// if (empty($_GET["ref"])) {
-//     $pk_cliente = "";
-//     $nome = "";
-//     $cpf = "";
-//     $whatsapp = "";
-//     $email = "";
-// } else {
-//     $pk_cliente = base64_decode((trim($_GET["ref"])));
-//     $sql = "
-//     SELECT pk_cliente, nome, cpf, whatsapp, email
-//     FROM clientes
-//     WHERE pk_cliente = :pk_cliente
-//     ";
-//     //prepara a sintaxe 
-//     $stmt = $conn->prepare($sql);
-//     //substitui a string :pk_servico pela variável $pk_servico
-//     $stmt->bindParam(':pk_cliente', $pk_cliente);
-//     //executa a sintaxe final do sql 
-//     $stmt->execute();
-//     // verifica se encontrou algum registro no banco de dados
-//     if ($stmt->rowCount() > 0) {
+//verifica se está vindo id na url
+if (empty($_GET["ref"])) {
+    $pk_ordem_servico = "";
+    $cpf = "";
+    $nome = "";
+    $data_ordem_servico = "";
+    $data_inicio = "";
+    $data_fim = "";
+} else {
+    $pk_ordem_servico = base64_decode((trim($_GET["ref"])));
+    $sql = "
+    SELECT pk_ordem_servico, data_ordem_servico, data_inicio, data_fim,
+    cpf, nome
+    FROM ordens_servicos
+    JOIN clientes ON pk_cliente = fk_cliente
+    WHERE pk_ordem_servico = :pk_ordem_servico
+    ";
+    //prepara a sintaxe 
+    $stmt = $conn->prepare($sql);
+    //substitui a string :pk_servico pela variável $pk_servico
+    $stmt->bindParam(':pk_ordem_servico', $pk_ordem_servico);
+    //executa a sintaxe final do sql 
+    $stmt->execute();
+    // verifica se encontrou algum registro no banco de dados
+    if ($stmt->rowCount() > 0) {
 
-//         $dado = $stmt->fetch(PDO::FETCH_OBJ);
-//         $nome = $dado->nome;
-//         $cpf = $dado->cpf;
-//         $whatsapp = $dado->whatsapp;
-//         $email = $dado->email;
-//     } else {
-//         $_SESSION["tipo"] = 'error';
-//         $_SESSION["title"] = 'Ops!';
-//         $_SESSION["msg"] = 'Registro não encontrado.';
-//         header(("Location ./"));
-//     }
-// }
+        $dado = $stmt->fetch(PDO::FETCH_OBJ);
+        $data_ordem_servico = $dado->data_ordem_servico;
+        $data_inicio = $dado->data_inicio;
+        $data_fim = $dado->data_fim;
+        $cpf = $dado->cpf;
+        $nome = $dado->nome;
+    } else {
+        $_SESSION["tipo"] = 'error';
+        $_SESSION["title"] = 'Ops!';
+        $_SESSION["msg"] = 'Registro não encontrado.';
+        header(("Location ./"));
+    }
+}
 ?>
 
 
@@ -100,30 +104,30 @@ include('../conexao-pdo.php');
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-2">
-                                                <label for="pk_cliente" class="form-label">Cód</label>
-                                                <input readonly type="text" class="form-control" id="pk_cliente" name="pk_cliente" value="<?php ?>">
+                                                <label for="pk_ordem_servico" class="form-label">Cód</label>
+                                                <input readonly type="text" class="form-control" id="pk_ordem_servico" name="pk_ordem_servico" value="<?php echo $pk_ordem_servico ?>">
                                             </div>
                                             <div class="col-4">
                                                 <label for="cpf" class="form-label">Cpf</label>
-                                                <input type="text" class="form-control" id="cpf" name="cpf" value="<?php ?>" data-mask="000.000.000-00" required minlength="14">
+                                                <input type="text" class="form-control" id="cpf" name="cpf" value="<?php echo $cpf ?>" data-mask="000.000.000-00" required minlength="14">
                                             </div>
                                             <div class="col-6">
                                                 <label for="nome" class="form-label">Nome</label>
-                                                <input readonly type="text" class="form-control" id="nome" name="nome" value="<?php ?>">
+                                                <input readonly type="text" class="form-control" id="nome" name="nome" value="<?php echo $nome ?>">
                                             </div>
                                         </div> <!-- /row -->
                                         <div class="row mt-3">
                                             <div class="col">
                                                 <label for="data_ordem_servico" class="form-label">Data O.S</label>
-                                                <input readonly type="text" class="form-control" id="data_ordem_servico" name="data_ordem_servico" value="<?php ?>">
+                                                <input readonly type="date" class="form-control" id="data_ordem_servico" name="data_ordem_servico" value="<?php echo $data_ordem_servico ?>">
                                             </div>
                                             <div class="col">
-                                                <label for="" class="form-label">Data Inicio</label>
-                                                <input type="date" class="form-control" id="" name="" value="<?php  ?>">
+                                                <label for="data_inicio" class="form-label">Data Inicio</label>
+                                                <input type="date" class="form-control" id="data_incio" name="data_inicio" value="<?php echo $data_inicio ?>">
                                             </div>
                                             <div class="col">
-                                                <label for="" class="form-label">Data Fim</label>
-                                                <input type="date" class="form-control" id="" name="" value="<?php  ?>">
+                                                <label for="data_fim" class="form-label">Data Fim</label>
+                                                <input type="date" class="form-control" id="data_fim" name="data_fim" value="<?php echo $data_fim ?>">
                                             </div>
                                         </div> <!-- /row -->
                                         <div class="row">
@@ -135,17 +139,63 @@ include('../conexao-pdo.php');
                                                     <div class="card-body">
                                                         <div class="row">
                                                             <div class="col">
-                                                                <label for="" class="form-label">Serviço</label>
-                                                                <select class="form-select-lg" aria-label="Default select example">
-                                                                    <option selected>Selecione</option>
-                                                                    <option value="1">One</option>
-                                                                    <option value="2">Two</option>
-                                                                    <option value="3">Three</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col">
-                                                                <label for="" class="form-label"> Valor </label>
-                                                                <input type="text" name="" id="" class="form-control">
+                                                                <table class="table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Serviço</th>
+                                                                            <th>Valor</th>
+                                                                            <th>Opções</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+
+                                                                        <tr>
+                                                                            <td>
+                                                                                <select class="form-select-lg form-control" aria-label="Default select example">
+                                                                                    <option selected>Selecione</option>
+                                                                                    <?php
+                                                                                    $sql = "
+                                                                                    SELECT pk_servico, servico 
+                                                                                    FROM servicos
+                                                                                    ORDER BY servico
+                                                                                    ";
+
+                                                                                    try {
+
+                                                                                        //prepara a sintaxe na conexão
+                                                                                        $stmt = $conn->prepare($sql);
+                                                                                        //executa o comando
+                                                                                        $stmt->execute();
+                                                                                        //recebe as infomações vindas do mysql
+                                                                                        $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+                                                                                        //recebe as informações para printar informações
+                                                                                        foreach ($dados as $row) {
+                                                                                            echo '<option value=" ' . $row->pk_servico . '">' . $row->servico . '</option>
+                                                                                        ';
+                                                                                        }
+                                                                                    } catch (Exception $ex) {
+                                                                                        $_SESSION["tipo"] = "error";
+                                                                                        $_SESSION["title"] = "Ops!";
+                                                                                        $_SESSION ["msg"] = $ex->getMessage();
+                                                                                    }
+
+                                                                                    ?>
+
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="text" name="" id="" class="form-control">
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <div class="text-center btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                                                                                    <div class="btn-group me-2" role="group" aria-label="First group">
+                                                                                        <a href="remover.php" class="btn btn-sm btn-outline-secondary bi bi-trash"></a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -153,33 +203,36 @@ include('../conexao-pdo.php');
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- /.card-body -->
-                                    <div class="card-footer text-right">
-                                        <a href="./" class="btn btn-outline-danger">
-                                            <i class="bi bi-arrow-left"></i>
-                                        </a>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-floppy"></i>
-                                        </button>
-                                    </div>
                                 </div>
-                            </form>
-
                         </div>
                     </div>
-                    <!-- /.row (main row) -->
-                </div><!-- /.container-fluid -->
-            </section>
-            <!-- /.content -->
+                    <!-- /.card-body -->
+                    <div class="card-footer text-right">
+                        <a href="./" class="btn btn-outline-danger">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-floppy"></i>
+                        </button>
+                    </div>
+                </div>
+                </form>
+
         </div>
-        <!-- /.content-wrapper -->
-        <!-- footer  -->
-        <?php include('../footer.php') ?>
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
+    </div>
+    <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- footer  -->
+    <?php include('../footer.php') ?>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
 
