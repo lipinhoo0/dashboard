@@ -2,6 +2,39 @@
 include('../verificar_aut.php');
 include('../conexao-pdo.php');
 
+$pagina_ativa = 'ordens_servico';
+
+$sql = "
+    SELECT pk_servico, servico 
+    FROM servicos
+    ORDER BY servico
+";
+
+try {
+
+    //prepara a sintaxe na conexão
+    $stmt = $conn->prepare($sql);
+    //executa o comando
+    $stmt->execute();
+    //recebe as infomações vindas do mysql
+    $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+    //recebe as informações para printar informações
+
+    $options = '<option value =""> Selecione </option>';
+    foreach ($dados as $row) {
+        $options .= '<option value=" ' . $row->pk_servico . '">' . $row->servico . '</option>';
+    }
+} catch (Exception $ex) {
+    $_SESSION["tipo"] = "error";
+    $_SESSION["title"] = "Ops!";
+    $_SESSION["msg"] = $ex->getMessage();
+
+    header('Location: ./');
+}
+
+
+
+
 //verifica se está vindo id na url
 if (empty($_GET["ref"])) {
     $pk_ordem_servico = "";
@@ -107,9 +140,16 @@ if (empty($_GET["ref"])) {
                                                 <label for="pk_ordem_servico" class="form-label">Cód</label>
                                                 <input readonly type="text" class="form-control" id="pk_ordem_servico" name="pk_ordem_servico" value="<?php echo $pk_ordem_servico ?>">
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-md-4">
                                                 <label for="cpf" class="form-label">Cpf</label>
-                                                <input type="text" class="form-control" id="cpf" name="cpf" value="<?php echo $cpf ?>" data-mask="000.000.000-00" required minlength="14">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="cpf" name="cpf" value="<?php echo $cpf ?>" data-mask="000.000.000-00" required minlength="14">
+                                                    <span class="input-group-append">
+                                                        <button type="button" id="btn-search" class="btn btn-default-btn-flat">
+                                                            <i class="bi bi-search"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div class="col-6">
                                                 <label for="nome" class="form-label">Nome</label>
@@ -135,11 +175,14 @@ if (empty($_GET["ref"])) {
                                                 <div class="mt-3 card card-secondary card-outline">
                                                     <div class="card-header">
                                                         <h5> Lista de Serviços </h5>
+                                                        <button type="button" class="btn btn-sm btn-primary float-right" id="btn-add">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="row">
                                                             <div class="col">
-                                                                <table class="table">
+                                                                <table class="table" id="tabela_servicos">
                                                                     <thead>
                                                                         <tr>
                                                                             <th>Serviço</th>
@@ -148,54 +191,64 @@ if (empty($_GET["ref"])) {
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-
+                                                                        <?php
+                                                                        if (empty($pk_ordem_servico)) {
+                                                                           echo '
                                                                         <tr>
                                                                             <td>
-                                                                                <select class="form-select-lg form-control" aria-label="Default select example">
-                                                                                    <option selected>Selecione</option>
-                                                                                    <?php
-                                                                                    $sql = "
-                                                                                    SELECT pk_servico, servico 
-                                                                                    FROM servicos
-                                                                                    ORDER BY servico
-                                                                                    ";
-
-                                                                                    try {
-
-                                                                                        //prepara a sintaxe na conexão
-                                                                                        $stmt = $conn->prepare($sql);
-                                                                                        //executa o comando
-                                                                                        $stmt->execute();
-                                                                                        //recebe as infomações vindas do mysql
-                                                                                        $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                                                                        //recebe as informações para printar informações
-                                                                                        foreach ($dados as $row) {
-                                                                                            echo '<option value=" ' . $row->pk_servico . '">' . $row->servico . '</option>
-                                                                                        ';
-                                                                                        }
-                                                                                    } catch (Exception $ex) {
-                                                                                        $_SESSION["tipo"] = "error";
-                                                                                        $_SESSION["title"] = "Ops!";
-                                                                                        $_SESSION ["msg"] = $ex->getMessage();
-
-                                                                                        header('Location: ./');
-                                                                                    }
-
-                                                                                    ?>
-
+                                                                                <select name="fk_servico[]" required class="form-select-lg form-control" aria-label="Default select example">
+                                                                                    echo '.  $options .'
                                                                                 </select>
                                                                             </td>
                                                                             <td>
-                                                                                <input type="text" name="" id="" class="form-control">
+                                                                                <input type="text" name="valor[]" id="" class="form-control">
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                <div class="text-center btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-                                                                                    <div class="btn-group me-2" role="group" aria-label="First group">
-                                                                                        <a href="remover.php" class="btn btn-sm btn-outline-secondary bi bi-trash"></a>
-                                                                                    </div>
-                                                                                </div>
                                                                             </td>
                                                                         </tr>
+                                                                        ';
+                                                                        } else {
+                                                                           $sql = "
+                                                                           SELECT s.pk_servico, s.servico, rl.valor
+                                                                           FROM servicos s
+                                                                           JOIN rl_servicos_os rl ON rl.fk_servico = s.pk_servico
+                                                                           where rl.fk_ordem_servico = :pk_ordem_servico
+                                                                           "; 
+
+                                                                           try {
+                                                                            $stmt = $conn->prepare($sql);
+                                                                            $stmt->bindParam (':pk_ordem_servico', $pk_ordem_servico);
+                                                                            $stmt-> execute();
+
+                                                                            $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+                                                                            foreach ($dados as $key => $row) {
+                                                                                echo '
+                                                                                <tr>
+                                                                                <td>
+                                                                                    <select name="fk_servico[]" required class="form-select-lg form-control" aria-label="Default select example">
+                                                                                    <option value=" '.$row->pk_servico.'"> '.$row->servico.' </option> 
+                                                                                    '.  $options .'
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input value = "'.$row->valor.'" type="text" name="valor[]" id="" class="form-control">
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                </td>
+                                                                            </tr>
+    ';
+                                                                            }
+
+                                                                           } catch (PDOException $ex) {
+                                                                            $_SESSION["tipo"] = "error";
+                                                                            $_SESSION["title"] = "Ops!";
+                                                                            $_SESSION["msg"] = $ex->getMessage();
+                                                                           }
+                                                                        }
+                                                                        
+
+                                                                        ?>
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -208,19 +261,21 @@ if (empty($_GET["ref"])) {
                                 </div>
                         </div>
                     </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer text-right">
-                        <a href="./" class="btn btn-outline-danger">
-                            <i class="bi bi-arrow-left"></i>
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-floppy"></i>
-                        </button>
-                    </div>
                 </div>
-                </form>
-
         </div>
+        <!-- /.card-body -->
+        <div class="card-footer text-right">
+            <a href="./" class="btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-floppy"></i>
+            </button>
+        </div>
+    </div>
+    </form>
+
+    </div>
     </div>
     <!-- /.row (main row) -->
     </div><!-- /.container-fluid -->
@@ -263,17 +318,29 @@ if (empty($_GET["ref"])) {
     <script>
         $(function() {
 
-        $("#cpf").blur(function() {
-            //limpar input de nome
-            $("#nome").val("");
-            //faz a requisição para o arquivo "consultar_cpf.php"
-            $.getJSON(
-                'consultar_cpf.php',
-                function(data){
-                    console.log(data)
-                }
-            )
-        })
+            $("#cpf").keyup(function() {
+                //limpar input de nome
+                $("#nome").val("");
+            })
+
+            $("#btn-search").click(function() {
+                //limpar input de nome
+                $("#nome").val("");
+                //faz a requisição para o arquivo "consultar_cpf.php"
+                $.getJSON(
+                    'consultar_cpf.php', {
+                        cpf: $("#cpf").val()
+                    },
+                    function(data) {
+                        if (data['success'] == true) {
+                            $("#nome").val(data['dado']['nome']);
+                        } else {
+                            alert(data['dado']);
+                            $('#cpf').val("")
+                        }
+                    }
+                )
+            })
 
             $("#theme-mode").click(function() {
                 //pegar atributo class do objeto
@@ -293,6 +360,30 @@ if (empty($_GET["ref"])) {
                     $("#asideMenu").attr("class", "main-sidebar sidebar-dark-primary elevation-4")
                 }
             });
+
+            $("#btn-add").click(function() {
+                var newRow = $("<tr>");
+                var cols = "";
+                cols += '<td>';
+                cols += '<select class= "form-control" name="fk_servico[]">';
+                cols += '<?php echo $options ?>';
+                cols += '</select>';
+                cols += '</td>';
+                cols += '<td><input type="number" class= "form-control" name= "valor[]"></td>'
+                cols += '<td>'
+                cols += '<button class= "btn btn-danger btn-sm" onclick="RemoveRow(this)" type="button"> <i class="fas fa-trash"></i></button>';
+                cols += '</td>'
+                newRow.append(cols);
+                $("#tabela_servicos").append(newRow);
+            });
+
+            RemoveRow = function(item) {
+                var tr = $(item).closest('tr');
+                tr.fadeOut(400, function() {
+                    tr.remove();
+                });
+                return false;
+            }
         });
     </script>
 

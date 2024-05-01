@@ -2,6 +2,8 @@
 include("../verificar_aut.php");
 include("../conexao-pdo.php");
 
+$pagina_ativa = 'clientes';
+
 //verifica se está vindo informações VIA POST
 if ($_POST){
     //verifica campos obrigatórios

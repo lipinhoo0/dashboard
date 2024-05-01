@@ -2,6 +2,8 @@
 include('../verificar_aut.php');
 include('../conexao-pdo.php');
 
+$pagina_ativa = 'clientes';
+
 //verifica se está vindo id na url
 if (empty($_GET["ref"])) {
     $pk_cliente = "";

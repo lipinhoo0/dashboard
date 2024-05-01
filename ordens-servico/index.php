@@ -1,6 +1,8 @@
 <?php
 include('../verificar_aut.php');
 include('../conexao-pdo.php');
+
+$pagina_ativa = 'ordens_servico';
 ?>
 
 

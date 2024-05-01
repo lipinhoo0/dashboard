@@ -1,6 +1,7 @@
 <?php
 include('../verificar_aut.php');
 include('../conexao-pdo.php');
+$pagina_ativa = 'clientes';
 ?>
 
 
