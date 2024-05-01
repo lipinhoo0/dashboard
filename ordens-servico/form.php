@@ -177,6 +177,8 @@ if (empty($_GET["ref"])) {
                                                                                         $_SESSION["tipo"] = "error";
                                                                                         $_SESSION["title"] = "Ops!";
                                                                                         $_SESSION ["msg"] = $ex->getMessage();
+
+                                                                                        header('Location: ./');
                                                                                     }
 
                                                                                     ?>
@@ -260,6 +262,18 @@ if (empty($_GET["ref"])) {
 
     <script>
         $(function() {
+
+        $("#cpf").blur(function() {
+            //limpar input de nome
+            $("#nome").val("");
+            //faz a requisição para o arquivo "consultar_cpf.php"
+            $.getJSON(
+                'consultar_cpf.php',
+                function(data){
+                    console.log(data)
+                }
+            )
+        })
 
             $("#theme-mode").click(function() {
                 //pegar atributo class do objeto
