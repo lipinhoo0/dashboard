@@ -1,3 +1,35 @@
+<?php
+$sql = "
+SELECT COUNT(pk_ordem_servico) total_os,
+(
+  SELECT COUNT(pk_cliente)
+  FROM clientes
+) total_clientes,
+(
+  SELECT COUNT(pk_servico)
+  FROM servicos
+) total_servicos,
+(
+  SELECT COUNT(pk_ordem_servico)
+  FROM ordens_servicos
+  WHERE data_fim <> '0000-00-00'
+) total_os_fechadas
+FROM ordens_servicos
+";
+
+try {
+  $stmt = $conn->prepare($sql);
+  $stmt -> execute();
+
+  $dados = $stmt->fetch(PDO::FETCH_OBJ);
+
+  $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os *100;
+  $os_abertas = $dados->total_os-$dados->total_os_fechadas;
+} catch (PDOException $ex) {
+  //throw $th;
+}
+?>
+
 <nav id="navBar" class="main-header navbar navbar-expand navbar-white navbar-light">
       <!-- Left navbar links -->
       <ul class="navbar-nav">

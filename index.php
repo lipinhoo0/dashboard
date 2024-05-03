@@ -3,6 +3,36 @@ include('./verificar_aut.php');
 include('./conexao-pdo.php');
 
 $pagina_ativa = 'home';
+
+$sql = "
+SELECT COUNT(pk_ordem_servico) total_os,
+(
+  SELECT COUNT(pk_cliente)
+  FROM clientes
+) total_clientes,
+(
+  SELECT COUNT(pk_servico)
+  FROM servicos
+) total_servicos,
+(
+  SELECT COUNT(pk_ordem_servico)
+  FROM ordens_servicos
+  WHERE data_fim <> '0000-00-00'
+) total_os_fechadas
+FROM ordens_servicos
+";
+
+try {
+  $stmt = $conn->prepare($sql);
+  $stmt -> execute();
+
+  $dados = $stmt->fetch(PDO::FETCH_OBJ);
+
+  $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os *100;
+  $os_abertas = $dados->total_os-$dados->total_os_fechadas;
+} catch (PDOException $ex) {
+  //throw $th;
+}
 ?>
 
 
@@ -67,14 +97,14 @@ $pagina_ativa = 'home';
               <!-- small box -->
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3>150</h3>
+                  <h3><?php echo $dados->total_os?></h3>
 
                   <p>Ordens de serviço</p>
                 </div>
                 <div class="icon">
                   <i class="bi bi-cash-coin"></i>
                 </div>
-                <a href="./ordens_servico" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./ordens-servico" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -82,14 +112,14 @@ $pagina_ativa = 'home';
               <!-- small box -->
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3>53<sup style="font-size: 20px">%</sup></h3>
+                  <h3> <?php echo intval($porcentagem_os_concluidas)?><sup style="font-size: 20px">%</sup></h3>
 
                   <p>O. S. Concluídas</p>
                 </div>
                 <div class="icon">
                   <i class="bi bi-graph-up-arrow "></i>
                 </div>
-                <a href="./servicos" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php echo caminhoURL?>ordens-servico" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -97,7 +127,7 @@ $pagina_ativa = 'home';
               <!-- small box -->
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3>44</h3>
+                  <h3><?php echo $dados->total_clientes?></h3>
 
                   <p>Clientes</p>
                 </div>
@@ -112,7 +142,7 @@ $pagina_ativa = 'home';
               <!-- small box -->
               <div class="small-box bg-danger">
                 <div class="inner">
-                  <h3>65</h3>
+                  <h3><?php echo $dados ->total_servicos?></h3>
 
                   <p>Serviços</p>
                 </div>

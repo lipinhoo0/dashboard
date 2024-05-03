@@ -80,7 +80,7 @@ $pagina_ativa = 'ordens_servico';
                     <tbody>
                       <?php
                       $sql = "
-                      SELECT pk_ordem_servico, data_inicio, data_fim, fk_cliente, FORMAT(valor_total,2,'de_DE') as valor_total,
+                      SELECT pk_ordem_servico, date_format(data_inicio,'%d/%m/%Y') as data_inicio, date_format(data_fim,'%d/%m/%Y') as data_fim, fk_cliente, FORMAT(valor_total,2,'de_DE') as valor_total,
                       nome
                       FROM ordens_servicos
                       JOIN clientes ON fk_cliente = pk_cliente
@@ -101,8 +101,8 @@ $pagina_ativa = 'ordens_servico';
                         <tr>
                         <td class ="text-center">' . $row->pk_ordem_servico . '</td>
                         <td>' . $row->nome . '</td>
-                        <td>' . date('d/m/Y', strtotime($row->data_inicio)) . '</td>
-                        <td>' . date('d/m/Y', strtotime($row->data_fim)) . '</td>
+                        <td>' .$row->data_inicio . '</td>
+                        <td>' . $row->data_fim . '</td>
                         <td>' . $row->valor_total . '</td>
                         <td class= "text-center">
                             <div class=" text-center btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">

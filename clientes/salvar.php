@@ -7,7 +7,8 @@ $pagina_ativa = 'clientes';
 //verifica se está vindo informações VIA POST
 if ($_POST){
     //verifica campos obrigatórios
-    if (empty($_POST["nome"]) ||empty($_POST["cpf"]) ||empty($_POST["email"]) || empty($POST["whatsapp"]) ) {
+    // var_dump($_POST); exit;
+    if (empty($_POST["nome"]) ||empty($_POST["cpf"]) ||empty($_POST["email"]) || empty($_POST["whatsapp"]) ) {
         $_SESSION["tipo"] = "warning";
         $_SESSION["title"] = "Ops!";
         $_SESSION["msg"] = "Por favor, preencha os campos vazios!";
@@ -56,7 +57,7 @@ if ($_POST){
         } catch (PDOException $ex){
             $_SESSION["tipo"] = "warning";
             $_SESSION["title"] = "Ops!";
-            $_SESSION["msg"] = "Por favor, preencha os campos vazios!";
+            $_SESSION["msg"] = $ex->getMessage();
             header("Location: ./");
             exit;
         }

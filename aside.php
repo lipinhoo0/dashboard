@@ -1,3 +1,35 @@
+<?php
+$sql = "
+SELECT COUNT(pk_ordem_servico) total_os,
+(
+  SELECT COUNT(pk_cliente)
+  FROM clientes
+) total_clientes,
+(
+  SELECT COUNT(pk_servico)
+  FROM servicos
+) total_servicos,
+(
+  SELECT COUNT(pk_ordem_servico)
+  FROM ordens_servicos
+  WHERE data_fim <> '0000-00-00'
+) total_os_fechadas
+FROM ordens_servicos
+";
+
+try {
+  $stmt = $conn->prepare($sql);
+  $stmt -> execute();
+
+  $dados = $stmt->fetch(PDO::FETCH_OBJ);
+
+  $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os *100;
+  $os_abertas = $dados->total_os-$dados->total_os_fechadas;
+} catch (PDOException $ex) {
+  //throw $th;
+}
+?>
+
 <aside id="asideMenu" class="main-sidebar sidebar-light-primary elevation-4">
     <!-- Brand Logo -->
     <a href="<?php echo caminhoURL?>" class="brand-link">
@@ -37,7 +69,7 @@
                         <i class="nav-icon bi bi-tools"></i>
                         <p>
                             Ordens de Serviços
-                            <span class="right badge badge-danger">15</span>
+                            <span class="right badge badge-danger"><?php echo $os_abertas ?></span>
                         </p>
                     </a>
                 </li>
@@ -46,7 +78,7 @@
                         <i class="nav-icon bi bi-people-fill"></i>
                         <p>
                             clientes
-                            <span class="badge right">6</span>
+                            <span class="badge right"><?php echo $dados->total_clientes?></span>
                         </p>
                     </a>
                 </li>
