@@ -31,7 +31,7 @@ try {
   $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os *100;
   $os_abertas = $dados->total_os-$dados->total_os_fechadas;
 } catch (PDOException $ex) {
-  //throw $th;
+  //throw $th;   
 }
 ?>
 

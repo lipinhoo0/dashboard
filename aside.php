@@ -45,7 +45,7 @@ try {
                 <img src="https://avatars.githubusercontent.com/u/144284241?v=4" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block"><?php echo $_SESSION["nome_usuario"] ?></a>
+                <a href="<?PHP echo caminhoURL?>meu_perfil" class="d-block"><?php echo $_SESSION["nome_usuario"] ?></a>
             </div>
         </div>
 
