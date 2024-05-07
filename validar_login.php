@@ -23,7 +23,10 @@ if ($_POST) {
 
         // stmt = statement 
         $stmt = $conn->prepare("
-            SELECT pk_usuario, nome FROM usuarios WHERE email LIKE :email AND senha LIKE :senha
+            SELECT pk_usuario, nome , foto
+            FROM usuarios 
+            WHERE email LIKE :email 
+            AND senha LIKE :senha
         ");
 
         $stmt->bindParam(':email', $email);
@@ -48,7 +51,7 @@ if ($_POST) {
             // declara variavel informando se o usuario está autenticado
             $_SESSION["autenticado"] = true;
             $_SESSION["pk_usuario"] = $row->pk_usuario;
-            
+            $_SESSION["foto_usuario"] = $row->foto;
             // transforma string em array, aonde tiver espaço
             $nome_usuario = explode(" ", $row->nome);
 

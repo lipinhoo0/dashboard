@@ -237,10 +237,28 @@ try {
           $("#asideMenu").attr("class", "main-sidebar sidebar-dark-primary elevation-4")
         }
       });
+
+      <?php 
+      $sql = "
+      SELECT COUNT(pk_ordem_servico) total,
+        DATE_FORMAT(data_ordem_servico, '%m/%Y')
+      FROM ordens_servicos
+      GROUP BY DATE_FORMAT(data_ordem_servico, '%m/%Y')
+      ORDER BY data_ordem_servico
+      ";
+      
+      try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+      } catch (PDOException $e) {
+        echo "console.log('" . $e->getMessage() . "');"
+      }
+      ?>
       var areaChartData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [{
-            label: 'Digital Goods',
+            label: 'O.S. Concluídas',
             backgroundColor: 'rgba(60,141,188,0.9)',
             borderColor: 'rgba(60,141,188,0.8)',
             pointRadius: false,

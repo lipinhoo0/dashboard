@@ -42,10 +42,10 @@ try {
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="https://avatars.githubusercontent.com/u/144284241?v=4" class="img-circle elevation-2" alt="User Image">
+                <img src="<?php echo caminhoURL . '/meu_perfil/fotos/' . $_SESSION["foto_usuario"] ?>" class="img-circle elevation-2" alt="<?php echo $_SESSION["nome_usuario"] ?>">
             </div>
             <div class="info">
-                <a href="<?PHP echo caminhoURL?>meu_perfil" class="d-block"><?php echo $_SESSION["nome_usuario"] ?></a>
+                <a href="<?php echo caminhoURL?>meu_perfil" class="d-block"><?php echo $_SESSION["nome_usuario"] ?></a>
             </div>
         </div>
 

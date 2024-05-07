@@ -53,7 +53,7 @@ if ($stmt->rowCount() > 0) {
     <!-- iCheck -->
     <link rel="stylesheet" href="../dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
     <!-- overlayScrollbars -->
@@ -93,7 +93,7 @@ if ($stmt->rowCount() > 0) {
                                     </div>
                                     <div class="row">
                                         <div class="col-md">
-                                            <img src="https://i.pinimg.com/originals/10/fd/e6/10fde63aac178a6ecc8f106399f8b424.jpg" alt="foto de perfil do usuario <?php echo $nome ?>" class="img-fluid rounded-circle" width="300" height="300">
+                                            <img src="<?php echo caminhoURL?>/meu_perfil/fotos/<?php echo $foto?>" alt="" class="img-fluid rounded-circle" width="300" height="300">
                                         </div>
 
                                         <div class="card-body">
@@ -115,10 +115,10 @@ if ($stmt->rowCount() > 0) {
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col">
-                                                    <label for="" class="form-label">Foto:</label>
+                                                    <label for="foto" class="form-label">Foto:</label>
                                                     <div class="custom-file">
-                                                        <input type="file" name="foto" id="foto">
-                                                        <label for="customFile" class="custom-file-label" >Selecionar Foto</label>
+                                                        <input type="file" name="foto" class="custom-file-input" id="foto">
+                                                        <label for="customFile" class="custom-file-label" >Selecionar Foto:</label>
                                                     </div>
                                                 </div> <!-- /.col -->
                                             </div>
@@ -172,6 +172,7 @@ if ($stmt->rowCount() > 0) {
     <script src="../dist/plugins/chart.js/Chart.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../dist/js/adminlte.js"></script>
+
     <script src="../dist/plugins/sweetalert2/sweetalert2.min.js"></script>
 
     <?php include('../sweet_alert2.php')?>
