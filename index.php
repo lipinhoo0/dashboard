@@ -252,7 +252,7 @@ try {
         $stmt->execute();
         $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
       } catch (PDOException $e) {
-        echo "console.log('" . $e->getMessage() . "');"
+        echo "console.log('" . $e->getMessage() . "');";
       }
       ?>
       var areaChartData = {
