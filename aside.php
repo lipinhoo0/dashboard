@@ -18,16 +18,19 @@ FROM ordens_servicos
 ";
 
 try {
-  $stmt = $conn->prepare($sql);
-  $stmt -> execute();
-
-  $dados = $stmt->fetch(PDO::FETCH_OBJ);
-
-  $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os *100;
-  $os_abertas = $dados->total_os-$dados->total_os_fechadas;
-} catch (PDOException $ex) {
-  //throw $th;
-}
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+  
+    $dados = $stmt->fetch(PDO::FETCH_OBJ);
+    if ($dados->total_os > 0) {
+      $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os * 100;
+    } else {
+      $porcentagem_os_concluidas= 0 ; 
+    }
+    $os_abertas = $dados->total_os - $dados->total_os_fechadas;
+  } catch (PDOException $ex) {
+    //throw $th;
+  }
 ?>
 
 <aside id="asideMenu" class="main-sidebar sidebar-light-primary elevation-4">

@@ -1,0 +1,10 @@
+****** MYsql ******
+host:sql307.infinityfree.com
+user:if0_36511518
+pass:Senac2024
+dbname:if0_36511518_senac 
+
+****** CPANEL ******
+infinityfree.com
+luiz.fecsilva@senacsp.edu.br
+lipinho#0611

@@ -24,14 +24,17 @@ FROM ordens_servicos
 
 try {
   $stmt = $conn->prepare($sql);
-  $stmt -> execute();
+  $stmt->execute();
 
   $dados = $stmt->fetch(PDO::FETCH_OBJ);
-
-  $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os *100;
-  $os_abertas = $dados->total_os-$dados->total_os_fechadas;
+  if ($dados->total_os > 0) {
+    $porcentagem_os_concluidas = $dados->total_os_fechadas / $dados->total_os * 100;
+  } else {
+    $porcentagem_os_concluidas = 0;
+  }
+  $os_abertas = $dados->total_os - $dados->total_os_fechadas;
 } catch (PDOException $ex) {
-  //throw $th;   
+  //throw $th;
 }
 ?>
 
@@ -97,7 +100,7 @@ try {
               <!-- small box -->
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3><?php echo $dados->total_os?></h3>
+                  <h3><?php echo $dados->total_os ?></h3>
 
                   <p>Ordens de serviço</p>
                 </div>
@@ -112,14 +115,14 @@ try {
               <!-- small box -->
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3> <?php echo intval($porcentagem_os_concluidas)?><sup style="font-size: 20px">%</sup></h3>
+                  <h3> <?php echo intval($porcentagem_os_concluidas) ?><sup style="font-size: 20px">%</sup></h3>
 
                   <p>O. S. Concluídas</p>
                 </div>
                 <div class="icon">
                   <i class="bi bi-graph-up-arrow "></i>
                 </div>
-                <a href="<?php echo caminhoURL?>ordens-servico" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php echo caminhoURL ?>ordens-servico" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -127,14 +130,14 @@ try {
               <!-- small box -->
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3><?php echo $dados->total_clientes?></h3>
+                  <h3><?php echo $dados->total_clientes ?></h3>
 
                   <p>Clientes</p>
                 </div>
                 <div class="icon">
                   <i class="bi bi-people"></i>
                 </div>
-                <a href="<?php caminhoURL?>cliente" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php caminhoURL ?>cliente" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -142,14 +145,14 @@ try {
               <!-- small box -->
               <div class="small-box bg-danger">
                 <div class="inner">
-                  <h3><?php echo $dados ->total_servicos?></h3>
+                  <h3><?php echo $dados->total_servicos ?></h3>
 
                   <p>Serviços</p>
                 </div>
                 <div class="icon">
                   <i class="bi bi-tools"></i>
                 </div>
-                <a href="<?php caminhoURL?>servicos" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php caminhoURL ?>servicos" class="small-box-footer">Ver todos<i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -227,7 +230,7 @@ try {
           $("#theme-mode").attr("class", "fas fa-moon");
           $("#navBar").removeClass("navbar-dark navbar-black")
           $("#navBar").addClass("navbar-light navbar-white")
-          $("#asideMenu").attr("class","main-sidebar sidebar-light-primary elevation-4")
+          $("#asideMenu").attr("class", "main-sidebar sidebar-light-primary elevation-4")
 
         } else {
           $("body").addClass("dark-mode");
@@ -238,25 +241,39 @@ try {
         }
       });
 
-      <?php 
+      <?php
       $sql = "
       SELECT COUNT(pk_ordem_servico) total,
-        DATE_FORMAT(data_ordem_servico, '%m/%Y')
-      FROM ordens_servicos
+      DATE_FORMAT(data_ordem_servico, '%m/%Y') mesAno,
+      (
+        SELECT COUNT(pk_ordem_servico)
+          FROM ordens_servicos
+          WHERE DATE_FORMAT(data_ordem_servico,' %m/%Y') = DATE_FORMAT(a.data_ordem_servico, '%m/%Y')
+          AND data_fim <> '0000-00-00'
+      ) total_concluidas 
+      FROM ordens_servicos a
+      WHERE data_ordem_servico >= DATE_SUB(data_ordem_servico, interval 1 year)
       GROUP BY DATE_FORMAT(data_ordem_servico, '%m/%Y')
       ORDER BY data_ordem_servico
       ";
-      
+
       try {
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        $meses = array();
+        $valores = array();
+        foreach ($dados as $key => $row) {
+          array_push($meses, "'$row->mesAno'");
+          array_push($valores, "'$row->total'");
+        }
       } catch (PDOException $e) {
         echo "console.log('" . $e->getMessage() . "');";
       }
       ?>
       var areaChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [<?php echo implode(",", $meses) ?>],
         datasets: [{
             label: 'O.S. Concluídas',
             backgroundColor: 'rgba(60,141,188,0.9)',
@@ -269,7 +286,7 @@ try {
             data: [28, 48, 40, 19, 86, 27, 90]
           },
           {
-            label: 'Electronics',
+            label: 'O.S. Total',
             backgroundColor: 'rgba(210, 214, 222, 1)',
             borderColor: 'rgba(210, 214, 222, 1)',
             pointRadius: false,
@@ -277,7 +294,7 @@ try {
             pointStrokeColor: '#c1c7d1',
             pointHighlightFill: '#fff',
             pointHighlightStroke: 'rgba(220,220,220,1)',
-            data: [65, 59, 80, 81, 56, 55, 40]
+            data: [<?php echo implode(",", $valores) ?>]
           },
         ]
       }
